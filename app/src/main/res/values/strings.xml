@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ecPhoto</string>
+
+    <string name="dialog_create_album_title">Create Album</string>
+    <string name="dialog_create_album_positive">Create</string>
+    <string name="dialog_create_album_negative">Cancel</string>
+    <string name="dialog_create_album_input_hint">Album Name</string>
 </resources>
