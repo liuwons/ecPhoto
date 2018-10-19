@@ -1,10 +1,18 @@
 package com.lwons.ecphoto.model;
 
-import java.util.List;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 /**
  * Created by liuwons on 2018/10/19
  */
+
+@Entity (tableName = "album")
 public class Album {
-    private List<Photo> mPhotoList;
+    @PrimaryKey
+    @NonNull
+    public String mName;
+
+    public long mCreateTime;
 }
