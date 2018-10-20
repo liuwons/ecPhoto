@@ -7,9 +7,11 @@ import android.text.TextUtils;
 import com.lwons.ecphoto.data.DataManager;
 import com.lwons.ecphoto.encry.Encryptor;
 import com.lwons.ecphoto.encry.EncryptorCallback;
+import com.lwons.ecphoto.model.Album;
 import com.lwons.ecphoto.model.Photo;
 
 import java.io.File;
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -203,5 +205,9 @@ public class Neo {
 
     public synchronized Observable<Boolean> addAlbum(String albumName) {
         return mDataManager.addAlbum(albumName);
+    }
+
+    public synchronized Observable<List<Album>> loadAllAlbums() {
+        return mDataManager.loadAlbums();
     }
 }

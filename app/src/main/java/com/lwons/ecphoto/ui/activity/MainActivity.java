@@ -11,13 +11,19 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.lwons.ecphoto.R;
+import com.lwons.ecphoto.model.Album;
 import com.lwons.ecphoto.neo.Neo;
+import com.lwons.ecphoto.ui.AlbumAdapter;
+
+import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -27,6 +33,8 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private static final int ALBUM_COLUMN = 2;
+
     private static final int REQ_READ_EXTERNAL_STORAGE = 5648;
     private static final int REQ_WRITE_EXTERNAL_STORAGE = 5649;
 
@@ -34,13 +42,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RelativeLayout mLoadingHolder;
     private RelativeLayout mErrorHolder;
 
+    private RecyclerView mAlbumRecycler;
+    private AlbumAdapter mAlbumAdapter;
+    private GridLayoutManager mAlbumLayoutManager;
+
+    private Disposable mAlbumDisposable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initViews();
+
+        if (permissionCheck()) {
+            onPermissionGet();
+        }
+    }
+
+    private void initViews() {
         mLoadingHolder = findViewById(R.id.loading_holder);
         mErrorHolder = findViewById(R.id.error_holder);
+
+        mAlbumRecycler = findViewById(R.id.album_list);
 
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -48,9 +72,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFloatingActionButton = findViewById(R.id.float_action_button);
         mFloatingActionButton.setOnClickListener(this);
 
-        if (permissionCheck()) {
-            onPermissionGet();
-        }
+        mAlbumAdapter = new AlbumAdapter();
+        mAlbumLayoutManager = new GridLayoutManager(this, ALBUM_COLUMN);
+        mAlbumRecycler.setLayoutManager(mAlbumLayoutManager);
+        mAlbumRecycler.setAdapter(mAlbumAdapter);
     }
 
     private void onPermissionGet() {
@@ -73,9 +98,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         .show();
                             }
                             if (Neo.getInstance().encryptInited()) {
-                                mLoadingHolder.setVisibility(View.GONE);
+                                onPrepared();
                             }
                         }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+    }
+
+    private void onPrepared() {
+        mLoadingHolder.setVisibility(View.GONE);
+
+        loadAlbums();
+    }
+
+    private void loadAlbums() {
+        if (mAlbumDisposable != null && !mAlbumDisposable.isDisposed()) {
+            mAlbumDisposable.dispose();
+        }
+        Neo.getInstance().loadAllAlbums()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Album>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        mAlbumDisposable = d;
+                    }
+
+                    @Override
+                    public void onNext(List<Album> albums) {
+                        mAlbumAdapter.addAlbums(albums);
                     }
 
                     @Override

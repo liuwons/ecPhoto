@@ -2,6 +2,7 @@ package com.lwons;
 
 import android.app.Application;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.lwons.ecphoto.db.DatabaseManager;
 
 /**
@@ -12,6 +13,7 @@ public class EcApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        Fresco.initialize(this);
         DatabaseManager.getInstance().init(getApplicationContext());
     }
 }
