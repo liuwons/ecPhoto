@@ -27,47 +27,27 @@ public class Encryptor {
     public static final int MODE_DECRYPT = 1;
     public static final int MODE_ENCRYPT = 2;
 
-    private static Encryptor mInstance;
-
-    private boolean mInited = false;
-
     private SecretKeySpec mSecretKeySpec;
     private Cipher mCipher;
 
     SecureRandom mSecureRandom;
 
-    public static Encryptor getInstance() {
-        if (mInstance == null) {
-            synchronized (Encryptor.class) {
-                if (mInstance == null) {
-                    mInstance = new Encryptor();
-                }
-            }
-        }
-        return mInstance;
-    }
-
-    public synchronized void init(String username, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
-        if (mInited) {
-            return;
-        }
+    public Encryptor(String username, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
         mSecureRandom = new SecureRandom(); // should be the best PRNG
 
         mSecretKeySpec = generateSecretKeySpec(username, password);
         mCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        mInited = true;
     }
 
-    public synchronized boolean available() {
-        return mInited;
+    public void encryptFile(File inputFile, File outputFile, EncryptorCallback callback) {
+        processFile(inputFile, outputFile, MODE_ENCRYPT, callback);
     }
 
-    public void processFile(File inputFile, File outputFile, int mode, EncryptorCallback callback) {
-        if (!mInited) {
-            callback.onFail(new EncryptorNotInitException("Encryptor not init yet"));
-            return;
-        }
+    public void decryptFile(File inputFile, File outputFile, EncryptorCallback callback) {
+        processFile(inputFile, outputFile, MODE_DECRYPT, callback);
+    }
 
+    private void processFile(File inputFile, File outputFile, int mode, EncryptorCallback callback) {
         if (mode != MODE_DECRYPT && mode != MODE_ENCRYPT) {
             callback.onFail(new IllegalArgumentException("mode not specified"));
             return;

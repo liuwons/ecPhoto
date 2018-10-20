@@ -20,24 +20,24 @@ public interface AppDAO {
     @Query("SELECT * FROM album")
     List<Album> loadAllAlbum();
 
-    @Query("SELECT * FROM photo WHERE  mAlbum = :album")
+    @Query("SELECT * FROM photo WHERE  album = :album")
     List<Photo> loadAllPhotos(String album);
 
     @Insert
     void insertPhoto(Photo... photos);
 
-    @Query("DELETE FROM photo WHERE  mId = :photoId")
+    @Query("DELETE FROM photo WHERE  photoId = :photoId")
     void deletePhoto(String photoId);
 
     @Insert
     void insertAlbum(Album... albums);
 
-    @Query("DELETE FROM album WHERE  mName = :albumName")
+    @Query("DELETE FROM album WHERE  name = :albumName")
     void deleteAlbum(String albumName);
 
     @Query("SELECT * FROM album")
     Flowable<List<Album>> asyncLoadAlbums();
 
-    @Query("SELECT * FROM photo WHERE  mAlbum = :album")
+    @Query("SELECT * FROM photo WHERE  album = :album")
     Flowable<List<Photo>> asyncLoadPhotos(String album);
 }

@@ -12,14 +12,14 @@ import android.support.annotation.NonNull;
 public class Photo {
     @PrimaryKey
     @NonNull
-    public String mId;
+    public String photoId;
 
     @NonNull
-    public String mAlbum;
+    public String album;
 
-    public String mOriginFilePath;
-    public String mEncryptedPFileath;
-    public long mSize;
+    public String originFilePath;
+    public String encryptedFilePath;
+    public long size;
 
-    public long mCreateTime;
+    public long createTime;
 }

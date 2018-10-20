@@ -4,7 +4,6 @@ import com.lwons.ecphoto.db.DatabaseManager;
 import com.lwons.ecphoto.model.Album;
 import com.lwons.ecphoto.model.Photo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -15,25 +14,10 @@ import io.reactivex.ObservableOnSubscribe;
  * Created by liuwons on 2018/10/19
  */
 public class DataManager {
-    private static DataManager sInstance;
-
     private DatabaseManager mDatabaseManager;
-    private List<Album> mAlbumList;
 
-    public static DataManager getInstance() {
-        if (sInstance == null) {
-            synchronized (DataManager.class) {
-                if (sInstance == null) {
-                    sInstance = new DataManager();
-                }
-            }
-        }
-        return sInstance;
-    }
-
-    private DataManager() {
+    public DataManager() {
         mDatabaseManager = DatabaseManager.getInstance();
-        mAlbumList = new ArrayList<>();
     }
 
     public Observable<Boolean> addAlbum(final String albumName) {
@@ -41,7 +25,7 @@ public class DataManager {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 Album album = new Album();
-                album.mName = albumName;
+                album.name = albumName;
                 album.mCreateTime = System.currentTimeMillis();
                 try {
                     DatabaseManager.getInstance().addAlbum(album);
@@ -69,14 +53,11 @@ public class DataManager {
         });
     }
 
-    public Observable<Boolean> addPhoto(final String albumName, final String file) {
+    public Observable<Boolean> asyncAddPhoto(final Photo photo) {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) {
                 try {
-                    Photo photo = new Photo();
-                    photo.mAlbum = albumName;
-                    photo.mOriginFilePath = file;
                     DatabaseManager.getInstance().addPhoto(photo);
                 } catch (Throwable throwable) {
                     e.onError(throwable);
@@ -85,6 +66,10 @@ public class DataManager {
                 e.onComplete();
             }
         });
+    }
+
+    public void addPhoto(final Photo photo) {
+        DatabaseManager.getInstance().addPhoto(photo);
     }
 
     public Observable<Boolean> deletePhoto(final String photoId) {

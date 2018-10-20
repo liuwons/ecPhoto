@@ -5,4 +5,11 @@
     <string name="dialog_create_album_positive">Create</string>
     <string name="dialog_create_album_negative">Cancel</string>
     <string name="dialog_create_album_input_hint">Album Name</string>
+
+    <string name="permission_read_external_storage">We need to read from SD card to get photos.</string>
+    <string name="permission_write_external_storage">We need to write to SD card to store enctypted photos.</string>
+
+    <string name="error_encrypt_not_support">Sorry that the encrypt algorithm is not support on your device.</string>
+    <string name="error_app_not_init">App is still initiating, try later please</string>
+    <string name="error_no_permission">App permission is not granted</string>
 </resources>
