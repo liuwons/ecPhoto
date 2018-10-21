@@ -22,4 +22,6 @@ public class Photo {
     public long size;
 
     public long createTime;
+
+    public String mExtras;
 }

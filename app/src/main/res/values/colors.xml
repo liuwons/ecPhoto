@@ -2,5 +2,36 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#2e7d32</color>
+
+
+    <color name="light_purple">#ce93d8</color>
+    <color name="deep_purple">#8e24aa</color>
+    <color name="dark_purple">#7e57c2</color>
+    <color name="light_indigo">#9fa8da</color>
+    <color name="deep_indigo">#3f51b5</color>
+    <color name="light_blue">#90caf9</color>
+    <color name="deep_blue">#2196f3</color>
+    <color name="light_cyan">#80deea</color>
+    <color name="deep_cyan">#00acc1</color>
+    <color name="light_teal">#80cbc4</color>
+    <color name="deep_teal">#26a69a</color>
+    <color name="light_green">#a5d6a7</color>
+    <color name="deep_green">#4caf50</color>
+
+    <array name="card_colors">
+        <item>@color/light_purple</item>
+        <item>@color/deep_purple</item>
+        <item>@color/dark_purple</item>
+        <item>@color/light_indigo</item>
+        <item>@color/deep_indigo</item>
+        <item>@color/light_blue</item>
+        <item>@color/deep_blue</item>
+        <item>@color/light_cyan</item>
+        <item>@color/deep_cyan</item>
+        <item>@color/light_teal</item>
+        <item>@color/deep_teal</item>
+        <item>@color/light_green</item>
+        <item>@color/deep_green</item>
+    </array>
 </resources>

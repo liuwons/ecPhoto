@@ -14,8 +14,10 @@ import java.util.List;
  * Created by liuwons on 2018/10/20
  */
 public class AlbumAdapter extends RecyclerView.Adapter {
-    private boolean mAllLoaded = false;
     private List<Album> mAlbumList;
+
+    private OnItemLongClickListener mItemLongClickListener;
+    private OnItemClickListener mItemClickListener;
 
     public AlbumAdapter() {
         mAlbumList = new ArrayList<>();
@@ -25,6 +27,12 @@ public class AlbumAdapter extends RecyclerView.Adapter {
     @Override
     public synchronized RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         AlbumCardView cardView = new AlbumCardView(parent.getContext());
+        if (mItemClickListener != null) {
+            cardView.setOnItemClickListener(mItemClickListener);
+        }
+        if (mItemLongClickListener != null) {
+            cardView.setOnItemLongClickListener(mItemLongClickListener);
+        }
         return new AlbumViewHolder(cardView);
     }
 
@@ -38,19 +46,29 @@ public class AlbumAdapter extends RecyclerView.Adapter {
         return mAlbumList.size();
     }
 
+    public void setOnLongClickListener(OnItemLongClickListener listener) {
+        mItemLongClickListener = listener;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mItemClickListener = listener;
+    }
+
     public synchronized void addAlbums(List<Album> albums) {
         int start = mAlbumList.size();
         mAlbumList.addAll(albums);
         notifyItemRangeChanged(start, albums.size());
     }
 
-    public synchronized void clearAll() {
+    public synchronized void setAlbums(List<Album> albums) {
         mAlbumList.clear();
-        mAllLoaded = false;
+        mAlbumList.addAll(albums);
+        notifyDataSetChanged();
     }
 
-    public synchronized void loadFinish() {
-        mAllLoaded = true;
+    public synchronized void clearAll() {
+        mAlbumList.clear();
+        notifyDataSetChanged();
     }
 
     private class AlbumViewHolder extends RecyclerView.ViewHolder {
@@ -64,5 +82,13 @@ public class AlbumAdapter extends RecyclerView.Adapter {
         public void update(Album album) {
             mCardView.renderAlbum(album);
         }
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(Album album);
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Album album);
     }
 }

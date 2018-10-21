@@ -2,6 +2,7 @@ package com.lwons.ecphoto.ui.activity;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -30,7 +31,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, AlbumAdapter.OnItemLongClickListener, AlbumAdapter.OnItemClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int ALBUM_COLUMN = 2;
@@ -73,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFloatingActionButton.setOnClickListener(this);
 
         mAlbumAdapter = new AlbumAdapter();
+        mAlbumAdapter.setOnItemClickListener(this);
+        mAlbumAdapter.setOnLongClickListener(this);
         mAlbumLayoutManager = new GridLayoutManager(this, ALBUM_COLUMN);
         mAlbumRecycler.setLayoutManager(mAlbumLayoutManager);
         mAlbumRecycler.setAdapter(mAlbumAdapter);
@@ -116,10 +119,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void onPrepared() {
         mLoadingHolder.setVisibility(View.GONE);
 
-        loadAlbums();
+        observeAlbums();
     }
 
-    private void loadAlbums() {
+    private void observeAlbums() {
         if (mAlbumDisposable != null && !mAlbumDisposable.isDisposed()) {
             mAlbumDisposable.dispose();
         }
@@ -134,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     @Override
                     public void onNext(List<Album> albums) {
-                        mAlbumAdapter.addAlbums(albums);
+                        mAlbumAdapter.setAlbums(albums);
                     }
 
                     @Override
@@ -269,5 +272,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
+    }
+
+    @Override
+    public void onItemLongClick(Album album) {
+
+    }
+
+    @Override
+    public void onItemClick(Album album) {
+        Intent intent = new Intent(this, AlbumBrowseActivity.class);
+        intent.putExtra("album", album.name);
+        startActivity(intent);
     }
 }
