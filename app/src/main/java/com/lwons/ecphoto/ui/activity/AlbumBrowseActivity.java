@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.imnjh.imagepicker.SImagePicker;
 import com.lwons.ecphoto.R;
 import com.lwons.ecphoto.model.Photo;
 import com.lwons.ecphoto.neo.Neo;
@@ -82,6 +83,12 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void addPhoto() {
+        SImagePicker
+                .from(this)
+                .maxCount(9)
+                .rowCount(3)
+                .pickMode(SImagePicker.MODE_IMAGE)
+                .forResult(0);
     }
 
     private void showError(String message) {
