@@ -58,7 +58,7 @@ public class AlbumCardView extends RelativeLayout implements View.OnClickListene
         mAlbum = album;
         mAlbumName.setText(album.name);
         if (TextUtils.isEmpty(album.mCoverPhoto)) {
-            mCover.setVisibility(GONE);
+            mCover.setVisibility(INVISIBLE);
         }
         int bgcolor = ColorUtils.randomCardColor(getContext());
         mCardView.setCardBackgroundColor(bgcolor);

@@ -5,7 +5,7 @@
     android:id="@+id/card"
     android:layout_margin="3dp"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
+    android:layout_height="wrap_content"
     >
 
     <android.support.constraint.ConstraintLayout
@@ -14,18 +14,19 @@
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/cover"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="16:9" />
 
         <TextView
             android:id="@+id/album_name"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="36dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             android:textSize="14sp"
             android:textColor="#ffffff"
             android:gravity="center_vertical"
