@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onItemClick(Album album) {
         Intent intent = new Intent(this, AlbumBrowseActivity.class);
-        intent.putExtra("album", album.name);
+        intent.putExtra(AlbumBrowseActivity.ALBUM_NAME, album.name);
         startActivity(intent);
     }
 }

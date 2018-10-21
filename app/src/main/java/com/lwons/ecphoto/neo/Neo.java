@@ -210,4 +210,8 @@ public class Neo {
     public synchronized Observable<List<Album>> loadAllAlbums() {
         return mDataManager.loadAlbums();
     }
+
+    public synchronized Observable<List<Photo>> loadPhotos(String albumName) {
+        return mDataManager.loadPhotos(albumName);
+    }
 }
