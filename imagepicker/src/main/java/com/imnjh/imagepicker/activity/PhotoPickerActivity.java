@@ -47,6 +47,7 @@ public class PhotoPickerActivity extends BasePickerActivity implements PickerAct
     public static final String PARAM_ROW_COUNT = "PARAM_ROW_COUNT";
     public static final String PARAM_SHOW_CAMERA = "PARAM_SHOW_CAMERA";
     public static final String PARAM_CUSTOM_PICK_TEXT_RES = "PARAM_CUSTOM_PICK_TEXT_RES";
+    public static final String PARAM_SHOW_ORIGINAL = "PARAM_SHOW_ORIGINAL";
     public static final String PARAM_FILE_CHOOSE_INTERCEPTOR = "PARAM_FILE_CHOOSE_INTERCEPTOR";
 
     public static final int REQUEST_CODE_PICKER_PREVIEW = 100;
@@ -66,6 +67,7 @@ public class PhotoPickerActivity extends BasePickerActivity implements PickerAct
     int pickRes;
     private @StringRes
     int pickNumRes;
+    private boolean showOriginal = false;
     private FileChooseInterceptor fileChooseInterceptor;
     private CapturePhotoHelper capturePhotoHelper;
 
@@ -108,7 +110,7 @@ public class PhotoPickerActivity extends BasePickerActivity implements PickerAct
                                 if (!CollectionUtils.isEmpty(photoUris)) {
                                     PickerPreviewActivity.startPicturePreviewFromPicker(PhotoPickerActivity.this,
                                             photoUris, photoController.getSelectedPhoto(), position,
-                                            bottomLayout.originalCheckbox.isChecked(), maxCount, rowCount,
+                                            bottomLayout.originalCheckbox.isChecked(), showOriginal, maxCount, rowCount,
                                             fileChooseInterceptor,
                                             pickRes, pickNumRes,
                                             PickerPreviewActivity.AnchorInfo.newInstance(view),
@@ -172,8 +174,9 @@ public class PhotoPickerActivity extends BasePickerActivity implements PickerAct
             photoController.setSelectedPhoto(selected);
         }
         pickRes = getIntent().getIntExtra(PARAM_CUSTOM_PICK_TEXT_RES, 0);
-
         bottomLayout.setCustomPickText(pickRes);
+        showOriginal = getIntent().getBooleanExtra(PARAM_SHOW_ORIGINAL, false);
+        bottomLayout.setShowOriginal(showOriginal);
         updateBottomBar();
 
         albumSpinner =

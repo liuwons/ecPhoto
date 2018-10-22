@@ -97,6 +97,7 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
                 .rowCount(3)
                 .maxCount(IMAGE_PICKER_ONCE_MAX_COUNT)
                 .showCamera(true)
+                .showOriginal(false)
                 .pickMode(SImagePicker.MODE_IMAGE)
                 .pickText(R.string.image_picker_select)
                 .forResult(REQ_CODE_PICK_IMAGE);

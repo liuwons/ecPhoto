@@ -36,6 +36,7 @@ public class SImagePicker {
     private int pickMode = MODE_IMAGE;
     private int rowCount = 4;
     private boolean showCamera = false;
+    private boolean showOriginal = false;
     private String avatarFilePath;
     private ArrayList<String> selected;
     private @StringRes
@@ -100,6 +101,11 @@ public class SImagePicker {
         return this;
     }
 
+    public SImagePicker showOriginal(boolean showOriginal) {
+        this.showOriginal = showOriginal;
+        return this;
+    }
+
     public SImagePicker pickText(@StringRes int pick) {
         this.pickRes = pick;
         return this;
@@ -120,6 +126,7 @@ public class SImagePicker {
         intent.putExtra(PhotoPickerActivity.PARAM_SELECTED, selected);
         intent.putExtra(PhotoPickerActivity.PARAM_ROW_COUNT, rowCount);
         intent.putExtra(PhotoPickerActivity.PARAM_SHOW_CAMERA, showCamera);
+        intent.putExtra(PhotoPickerActivity.PARAM_SHOW_ORIGINAL, showOriginal);
         intent.putExtra(PhotoPickerActivity.PARAM_CUSTOM_PICK_TEXT_RES, pickRes);
         intent.putExtra(PhotoPickerActivity.PARAM_FILE_CHOOSE_INTERCEPTOR, fileChooseInterceptor);
         intent.putExtra(CropImageActivity.PARAM_AVATAR_PATH, avatarFilePath);

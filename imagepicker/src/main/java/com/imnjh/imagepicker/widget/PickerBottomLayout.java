@@ -29,6 +29,8 @@ public class PickerBottomLayout extends FrameLayout {
 
     private int pickTextRes = R.string.general_send;
 
+    private boolean showOriginal = false;
+
     public PickerBottomLayout(Context context) {
         this(context, null);
     }
@@ -69,11 +71,16 @@ public class PickerBottomLayout extends FrameLayout {
             send.setEnabled(true);
             send.setText(getResources().getString(pickTextRes) + " "
                     + getResources().getString(R.string.bracket_num, count));
-            originalContainer.setVisibility(View.VISIBLE);
+            if (showOriginal) {
+                originalContainer.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     public void updateSelectedSize(String size) {
+        if (!showOriginal) {
+            return;
+        }
         if (TextUtils.isEmpty(size)) {
             originalContainer.setVisibility(View.GONE);
             originalCheckbox.setChecked(false);
@@ -99,10 +106,7 @@ public class PickerBottomLayout extends FrameLayout {
     }
 
     public void setShowOriginal(boolean showOriginalBox) {
-        if (showOriginalBox) {
-            originalContainer.setVisibility(View.GONE);
-        } else {
-            originalContainer.setVisibility(View.VISIBLE);
-        }
+        showOriginal = showOriginalBox;
+        originalContainer.setVisibility(showOriginalBox ? VISIBLE : GONE);
     }
 }

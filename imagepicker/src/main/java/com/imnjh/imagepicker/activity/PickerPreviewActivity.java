@@ -53,6 +53,7 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
 
     public static final String KEY_URIS = "picture_uri";
     public static final String KEY_SELECTED = "picture_selected";
+    public static final String KEY_SHOW_ORIGINAL = "show_original";
     public static final String KEY_SELECTED_ORIGINAL = "select_original";
     public static final String KEY_CURRENT_POSITION = "current_position";
     public static final String KEY_MAX_COUNT = "max_count";
@@ -85,6 +86,7 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
     private int rowCount = 4;
     private boolean selectOriginal = false;
     private String title;
+    private boolean showOriginal = false;
     private int currentState = STATE_SHOW_MENU;
     private FileChooseInterceptor fileChooseInterceptor;
     private PreviewAdapter previewAdapter;
@@ -129,7 +131,7 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
      */
     public static void startPicturePreviewFromPicker(Activity activityContext,
                                                      ArrayList<Uri> pictures, ArrayList<String> selected, int currentPosition,
-                                                     boolean selectOriginal, int maxCount, int rowCount,
+                                                     boolean selectOriginal, boolean showOriginal, int maxCount, int rowCount,
                                                      FileChooseInterceptor fileChooseInterceptor,
                                                      @StringRes int pickRes, @StringRes int pickNumRes, AnchorInfo anchorInfo,
                                                      int requestCode) {
@@ -138,6 +140,7 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
         intent.putParcelableArrayListExtra(KEY_URIS, pictures);
         intent.putStringArrayListExtra(KEY_SELECTED, selected);
         intent.putExtra(KEY_SELECTED_ORIGINAL, selectOriginal);
+        intent.putExtra(KEY_SHOW_ORIGINAL, showOriginal);
         intent.putExtra(KEY_MAX_COUNT, maxCount);
         intent.putExtra(KEY_ROW_COUNT, rowCount);
         intent.putExtra(KEY_FILE_CHOOSE_INTERCEPTOR, fileChooseInterceptor);
@@ -227,9 +230,6 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
             toolbar.setBackgroundColor(SImagePicker.getPickerConfig().getToolbarColor());
         }
         previewBottomLayout = (PickerBottomLayout) findViewById(R.id.picker_bottom);
-        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) toolbar.getLayoutParams();
-        layoutParams2.height += SystemUtil.statusBarHeight;
-        toolbar.setLayoutParams(layoutParams2);
         navView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,6 +242,7 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
         ArrayList<Uri> uriParam = getIntent().getParcelableArrayListExtra(KEY_URIS);
         ArrayList<String> selectedParam = getIntent().getStringArrayListExtra(KEY_SELECTED);
         selectOriginal = getIntent().getBooleanExtra(KEY_SELECTED_ORIGINAL, false);
+        showOriginal = getIntent().getBooleanExtra(KEY_SHOW_ORIGINAL, false);
         initPosition = getIntent().getIntExtra(KEY_CURRENT_POSITION, 0);
         if (selectedParam != null) {
             selected.addAll(selectedParam);
@@ -269,6 +270,7 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
         startEnterAnimation(uris.get(viewPager.getCurrentItem()));
 
         previewBottomLayout.originalCheckbox.setChecked(selectOriginal);
+        previewBottomLayout.setShowOriginal(showOriginal);
         previewBottomLayout.send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -482,7 +484,8 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
     }
 
     private void hideMenu() {
-        toolbar.setTranslationY(-toolbarHeight);
+        // toolbar.setTranslationY(-toolbarHeight);
+        toolbar.setVisibility(View.GONE);
         previewBottomLayout.setTranslationY(bottomLayoutHeight);
         contentView.setSystemUiVisibility(View.INVISIBLE);
         currentState = STATE_FULLSCREEN;
@@ -490,12 +493,13 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
 
 
     private void hideTitleBar() {
-        toolbar.animate().translationY(-toolbar.getHeight())
-                .setInterpolator(new AccelerateInterpolator(2));
+        // toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+        toolbar.setVisibility(View.GONE);
     }
 
     private void showTitleBar() {
-        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        // toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        toolbar.setVisibility(View.VISIBLE);
     }
 
     private void toggleSelectPhoto(String filePath) {
