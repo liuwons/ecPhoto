@@ -1,6 +1,9 @@
 package com.lwons.ecphoto.ui.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -9,10 +12,12 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.imnjh.imagepicker.SImagePicker;
+import com.imnjh.imagepicker.activity.PhotoPickerActivity;
 import com.lwons.ecphoto.R;
 import com.lwons.ecphoto.model.Photo;
 import com.lwons.ecphoto.neo.Neo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observer;
@@ -25,6 +30,10 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class AlbumBrowseActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String ALBUM_NAME = "album_name";
+
+    private static final int REQ_CODE_PICK_IMAGE = 5650;
+
+    private static final int IMAGE_PICKER_ONCE_MAX_COUNT = 10;
 
     private FloatingActionButton mFloatingActionButton;
     private RecyclerView mPhotoRecycler;
@@ -85,10 +94,12 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
     private void addPhoto() {
         SImagePicker
                 .from(this)
-                .maxCount(9)
                 .rowCount(3)
+                .maxCount(IMAGE_PICKER_ONCE_MAX_COUNT)
+                .showCamera(true)
                 .pickMode(SImagePicker.MODE_IMAGE)
-                .forResult(0);
+                .pickText(R.string.image_picker_select)
+                .forResult(REQ_CODE_PICK_IMAGE);
     }
 
     private void showError(String message) {
@@ -99,6 +110,17 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         if (v == mFloatingActionButton) {
             addPhoto();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == REQ_CODE_PICK_IMAGE) {
+            final ArrayList<String> pathList =
+                    data.getStringArrayListExtra(PhotoPickerActivity.EXTRA_RESULT_SELECTION);
+            final boolean original =
+                    data.getBooleanExtra(PhotoPickerActivity.EXTRA_RESULT_ORIGINAL, false);
         }
     }
 }

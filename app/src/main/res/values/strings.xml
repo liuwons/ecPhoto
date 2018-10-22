@@ -12,4 +12,6 @@
     <string name="error_encrypt_not_support">Sorry that the encrypt algorithm is not support on your device.</string>
     <string name="error_app_not_init">App is still initiating, try later please</string>
     <string name="error_no_permission">App permission is not granted</string>
+
+    <string name="image_picker_select">Select</string>
 </resources>
