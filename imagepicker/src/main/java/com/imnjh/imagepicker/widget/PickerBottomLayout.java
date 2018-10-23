@@ -5,6 +5,7 @@ import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
@@ -31,6 +32,8 @@ public class PickerBottomLayout extends FrameLayout {
 
     private boolean showOriginal = false;
 
+    private ViewGroup rootView;
+
     public PickerBottomLayout(Context context) {
         this(context, null);
     }
@@ -46,6 +49,7 @@ public class PickerBottomLayout extends FrameLayout {
 
     private void init(Context context) {
         inflate(context, R.layout.picker_bottom_layout, this);
+        rootView = findViewById(R.id.picker_bottom_root);
         send = findViewById(R.id.send);
         originalSize = findViewById(R.id.original_size);
         originalContainer = findViewById(R.id.original_container);
@@ -108,5 +112,13 @@ public class PickerBottomLayout extends FrameLayout {
     public void setShowOriginal(boolean showOriginalBox) {
         showOriginal = showOriginalBox;
         originalContainer.setVisibility(showOriginalBox ? VISIBLE : GONE);
+    }
+
+    public void setDarkMode(boolean darkMode) {
+        if (darkMode) {
+            rootView.setBackgroundColor(getResources().getColor(R.color.picker_bottom_dark_bg));
+        } else {
+            rootView.setBackgroundColor(getResources().getColor(R.color.picker_bottom_bg));
+        }
     }
 }

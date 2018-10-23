@@ -20,4 +20,7 @@
     <color name="light_black">#333333</color>
     <color name="color_d8d8d8">#D8D8D8</color>
     <color name="light_blue">#F3F6F8</color>
+
+    <color name="picker_bottom_bg">#ffffffff</color>
+    <color name="picker_bottom_dark_bg">#00ffffff</color>
 </resources>

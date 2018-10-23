@@ -233,6 +233,7 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
         toolbar.setLayoutParams(toolbarLayoutParams);
         titleView = (TextView) findViewById(R.id.title);
         previewBottomLayout = (PickerBottomLayout) findViewById(R.id.picker_bottom);
+        previewBottomLayout.setDarkMode(true);
         navView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
