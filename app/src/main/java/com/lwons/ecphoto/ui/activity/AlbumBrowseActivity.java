@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.imnjh.imagepicker.SImagePicker;
@@ -16,6 +18,7 @@ import com.imnjh.imagepicker.activity.PhotoPickerActivity;
 import com.lwons.ecphoto.R;
 import com.lwons.ecphoto.model.Photo;
 import com.lwons.ecphoto.neo.Neo;
+import com.lwons.ecphoto.ui.PhotoAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,19 +38,26 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
 
     private static final int IMAGE_PICKER_ONCE_MAX_COUNT = 10;
 
+    private static final int COL_COUNT = 4;
+
     private FloatingActionButton mFloatingActionButton;
     private RecyclerView mPhotoRecycler;
+    private PhotoAdapter mPhotoAdapter;
 
     private String mAlbumName;
 
-    private Disposable mAlbumDisposable;
+    private Disposable mPhotoDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_browse);
 
-        mPhotoRecycler = findViewById(R.id.album_list);
+        mPhotoRecycler = findViewById(R.id.photo_list);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, COL_COUNT);
+        mPhotoRecycler.setLayoutManager(layoutManager);
+        mPhotoAdapter = new PhotoAdapter();
+        mPhotoRecycler.setAdapter(mPhotoAdapter);
 
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -65,8 +75,8 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void observeAlbum() {
-        if (mAlbumDisposable != null && !mAlbumDisposable.isDisposed()) {
-            mAlbumDisposable.dispose();
+        if (mPhotoDisposable != null && !mPhotoDisposable.isDisposed()) {
+            mPhotoDisposable.dispose();
         }
         Neo.getInstance().loadPhotos(mAlbumName)
                 .subscribeOn(Schedulers.io())
@@ -74,11 +84,12 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
                 .subscribe(new Observer<List<Photo>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        mAlbumDisposable = d;
+                        mPhotoDisposable = d;
                     }
 
                     @Override
                     public void onNext(List<Photo> photos) {
+                        mPhotoAdapter.setPhotos(photos);
                     }
 
                     @Override
@@ -91,7 +102,7 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
                 });
     }
 
-    private void addPhoto() {
+    private void pickPhoto() {
         SImagePicker
                 .from(this)
                 .rowCount(3)
@@ -110,8 +121,52 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         if (v == mFloatingActionButton) {
-            addPhoto();
+            pickPhoto();
         }
+    }
+
+    private void onAddPhotos(List<String> photoUris) {
+        for (String uri : photoUris) {
+            Neo.getInstance().encryptPhoto(this, mAlbumName, uri)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Integer>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(Integer integer) {
+                            Log.e("liuwons", "update:" + integer);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                            Log.e("liuwons", "encryptPhoto error");
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            Log.e("liuwons", "encryptPhoto succeed");
+                        }
+                    });
+        }
+    }
+
+    private void onPickedPhotos(List<String> photos) {
+        List<String> uris = new ArrayList<>(photos.size());
+        for (String path : photos) {
+            if (!TextUtils.isEmpty(path)) {
+                if (path.startsWith("/")) {
+                    uris.add("file://" + path);
+                } else {
+                    uris.add(path);
+                }
+            }
+        }
+        onAddPhotos(uris);
     }
 
     @Override
@@ -120,8 +175,7 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
         if (resultCode == Activity.RESULT_OK && requestCode == REQ_CODE_PICK_IMAGE) {
             final ArrayList<String> pathList =
                     data.getStringArrayListExtra(PhotoPickerActivity.EXTRA_RESULT_SELECTION);
-            final boolean original =
-                    data.getBooleanExtra(PhotoPickerActivity.EXTRA_RESULT_ORIGINAL, false);
+            onPickedPhotos(pathList);
         }
     }
 }

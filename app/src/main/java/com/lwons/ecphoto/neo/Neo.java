@@ -2,8 +2,10 @@ package com.lwons.ecphoto.neo;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.text.TextUtils;
 
+import com.imnjh.imagepicker.util.SystemUtil;
 import com.lwons.ecphoto.data.DataManager;
 import com.lwons.ecphoto.encry.Encryptor;
 import com.lwons.ecphoto.encry.EncryptorCallback;
@@ -11,6 +13,12 @@ import com.lwons.ecphoto.model.Album;
 import com.lwons.ecphoto.model.Photo;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -21,6 +29,8 @@ import io.reactivex.ObservableOnSubscribe;
  * Created by liuwons on 2018/10/20
  */
 public class Neo {
+    private static final String ENCRYPTED_FILE_SUFFIX = ".ecp";
+
     private static Neo sInstance;
 
     // name of SharedPreference
@@ -33,6 +43,8 @@ public class Neo {
 
     private boolean mInited = false;
     private File mBasePath;
+    private String mEncryptedFileIdPrefix = "";
+    private int mLastEncrypedFileIndex = 0;
 
     public static Neo getInstance() {
         if (sInstance == null) {
@@ -81,6 +93,8 @@ public class Neo {
                     return;
                 }
 
+                mEncryptedFileIdPrefix = String.valueOf(System.currentTimeMillis());
+                mLastEncrypedFileIndex = 0;
                 e.onNext(true);
                 mInited = true;
             }
@@ -103,7 +117,7 @@ public class Neo {
         return mEncryptor != null;
     }
 
-    public synchronized Observable<Integer> encryptPhoto(final String album, final String filePath) {
+    public synchronized Observable<Integer> encryptPhoto(Context context, final String album, final String uri) {
         if (!mInited) {
             return Observable.error(new NeoException("not init yet"));
         }
@@ -112,22 +126,37 @@ public class Neo {
             return Observable.error(new NeoException("encryptor not init yet"));
         }
 
-        if (TextUtils.isEmpty(filePath)) {
+        if (TextUtils.isEmpty(uri)) {
             return Observable.error(new NeoException("read file failed"));
         }
 
-        final File inputFile = new File(filePath);
-        if (!inputFile.exists() || !inputFile.isFile()) {
-            return Observable.error(new NeoException("file not exists"));
+        final InputStream inputStream;
+        int size = 0;
+        try {
+            inputStream = context.getContentResolver().openInputStream(Uri.parse(uri));
+            size = inputStream.available();
+        } catch (FileNotFoundException e) {
+            return Observable.error(new NeoException("file not found"));
+        } catch (IOException e) {
+            return Observable.error(new NeoException("read file failed"));
         }
 
+        final String photoId = generateEncryptedPhotoId();
+        final String outputPath = generateEncryptedFilePath(album, photoId);
+        File outputFile = new File(outputPath);
+        final FileOutputStream outputStream;
+        try {
+            outputStream = new FileOutputStream(outputFile);
+        } catch (FileNotFoundException e) {
+            return Observable.error(new NeoException("create file failed"));
+        }
+
+
+        final int finalSize = size;
         return Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(final ObservableEmitter<Integer> e) throws Exception {
-                final String outputPath = "";
-                File outputFile = new File(outputPath);
-
-                mEncryptor.encryptFile(inputFile, outputFile, new EncryptorCallback() {
+                mEncryptor.encrypt(inputStream, outputStream, new EncryptorCallback() {
                     @Override
                     public void onFail(Throwable throwable) {
                         e.onError(throwable);
@@ -141,12 +170,12 @@ public class Neo {
                     @Override
                     public void onFinish() {
                         Photo photo = new Photo();
-                        photo.originFilePath = filePath;
+                        photo.originUri = uri;
                         photo.album = album;
                         photo.createTime = System.currentTimeMillis();
                         photo.encryptedFilePath = outputPath;
-                        photo.photoId = "";
-                        photo.size = inputFile.length();
+                        photo.photoId = photoId;
+                        photo.size = finalSize;
                         mDataManager.addPhoto(photo);
                     }
                 });
@@ -171,11 +200,24 @@ public class Neo {
         if (!inputFile.exists() || !inputFile.isFile()) {
             return Observable.error(new NeoException("file not exists"));
         }
+        final FileInputStream inputStream;
+        try {
+            inputStream = new FileInputStream(inputFile);
+        } catch (FileNotFoundException e) {
+            return Observable.error(new NeoException("file not found"));
+        }
+
+        final OutputStream outputStream;
+        try {
+            outputStream = new FileOutputStream(outputPath);
+        } catch (FileNotFoundException e) {
+            return Observable.error(new NeoException("create file failed"));
+        }
 
         return Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(final ObservableEmitter<Integer> e) throws Exception {
-                mEncryptor.decryptFile(new File(photo.encryptedFilePath), new File(outputPath), new EncryptorCallback() {
+                mEncryptor.decrypt(inputStream, outputStream, new EncryptorCallback() {
                     @Override
                     public void onFail(Throwable throwable) {
                         e.onError(throwable);
@@ -213,5 +255,26 @@ public class Neo {
 
     public synchronized Observable<List<Photo>> loadPhotos(String albumName) {
         return mDataManager.loadPhotos(albumName);
+    }
+
+    private long generateEncryptedFileIndex() {
+        return mLastEncrypedFileIndex ++;
+    }
+
+    private String generateEncryptedPhotoId() {
+        return mEncryptedFileIdPrefix + generateEncryptedFileIndex();
+    }
+
+    private String createEncryptedFileName(String album, String photoId) {
+        return photoId + ENCRYPTED_FILE_SUFFIX;
+    }
+
+    private String generateEncryptedFilePath(String albumName, String photoId) {
+        String filename = createEncryptedFileName(albumName, photoId);
+        File albumPath = new File(mBasePath, albumName);
+        if (!albumPath.exists()) {
+            albumPath.mkdirs();
+        }
+        return new File(albumPath, filename).getAbsolutePath();
     }
 }

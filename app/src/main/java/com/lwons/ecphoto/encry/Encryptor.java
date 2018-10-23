@@ -2,8 +2,6 @@ package com.lwons.ecphoto.encry;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,7 +26,6 @@ public class Encryptor {
     public static final int MODE_ENCRYPT = 2;
 
     private SecretKeySpec mSecretKeySpec;
-    private Cipher mCipher;
 
     SecureRandom mSecureRandom;
 
@@ -36,37 +33,26 @@ public class Encryptor {
         mSecureRandom = new SecureRandom(); // should be the best PRNG
 
         mSecretKeySpec = generateSecretKeySpec(username, password);
-        mCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
     }
 
-    public void encryptFile(File inputFile, File outputFile, EncryptorCallback callback) {
-        processFile(inputFile, outputFile, MODE_ENCRYPT, callback);
+    public void encrypt(InputStream inputStream, OutputStream outputStream, EncryptorCallback callback) {
+        processFile(inputStream, outputStream, MODE_ENCRYPT, callback);
     }
 
-    public void decryptFile(File inputFile, File outputFile, EncryptorCallback callback) {
-        processFile(inputFile, outputFile, MODE_DECRYPT, callback);
+    public void decrypt(InputStream inputStream, OutputStream outputStream, EncryptorCallback callback) {
+        processFile(inputStream, outputStream, MODE_DECRYPT, callback);
     }
 
-    private void processFile(File inputFile, File outputFile, int mode, EncryptorCallback callback) {
+    private void processFile(InputStream inputStream, OutputStream outputStream, int mode, EncryptorCallback callback) {
         if (mode != MODE_DECRYPT && mode != MODE_ENCRYPT) {
             callback.onFail(new IllegalArgumentException("mode not specified"));
             return;
         }
 
-        FileInputStream fileInputStream;
+        long totalSize = 0;
         try {
-            fileInputStream = getFileInputStream(inputFile);
-        } catch (Exception e) {
-            callback.onFail(e);
-            return;
-        }
-
-        long totalSize = inputFile.length();
-
-        FileOutputStream fileOutputStream;
-        try {
-            fileOutputStream = new FileOutputStream(outputFile);
-        } catch (FileNotFoundException e) {
+            totalSize = inputStream.available();
+        } catch (IOException e) {
             callback.onFail(e);
             return;
         }
@@ -77,7 +63,7 @@ public class Encryptor {
             mSecureRandom.nextBytes(bytes);
             parameterSpec = new IvParameterSpec(bytes);
             try {
-                fileOutputStream.write(bytes);
+                outputStream.write(bytes);
             } catch (Exception e) {
                 callback.onFail(e);
                 return;
@@ -85,7 +71,7 @@ public class Encryptor {
         } else {
             byte[] bytes = new byte[16];
             try {
-                readInput(fileInputStream, bytes);
+                readInput(inputStream, bytes);
             } catch (Exception e) {
                 callback.onFail(e);
                 return;
@@ -94,20 +80,22 @@ public class Encryptor {
         }
 
         int m = mode == MODE_ENCRYPT ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE;
+        Cipher cipher;
         try {
-            mCipher.init(m, mSecretKeySpec, parameterSpec);
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(m, mSecretKeySpec, parameterSpec);
         } catch (Exception e) {
             callback.onFail(e);
             return;
         }
-        CipherOutputStream cipherOutputStream = new CipherOutputStream(fileOutputStream, mCipher);
+        CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, cipher);
 
         long totalRead = 0;
         int lastProgress = 0;
         byte[] buffer = new byte[1024];
         int bytesdRead;
         try {
-            while ((bytesdRead = fileInputStream.read(buffer)) >= 0) {
+            while ((bytesdRead = inputStream.read(buffer)) >= 0) {
                 cipherOutputStream.write(buffer, 0, bytesdRead);
 
                 totalRead += bytesdRead;
@@ -123,7 +111,7 @@ public class Encryptor {
         }
 
         try {
-            fileInputStream.close();
+            inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

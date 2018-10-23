@@ -44,7 +44,7 @@ public class AlbumCardView extends RelativeLayout implements View.OnClickListene
     }
 
     private void initView() {
-        LayoutInflater.from(getContext()).inflate(R.layout.layout_album, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.recycler_item_album, this);
         mCardView = findViewById(R.id.card);
         mAlbumName = findViewById(R.id.album_name);
         mCover = findViewById(R.id.cover);
