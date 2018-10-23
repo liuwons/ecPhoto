@@ -30,6 +30,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.imnjh.imagepicker.FileChooseInterceptor;
@@ -214,6 +215,7 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
 
 
     private void initUI() {
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         toolbarHeight =
                 getResources().getDimensionPixelSize(R.dimen.toolbar_height) + SystemUtil.statusBarHeight;
         bottomLayoutHeight = getResources().getDimensionPixelSize(R.dimen.bottombar_height);
@@ -224,11 +226,12 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
         containerView.addView(fakeImage);
         viewPager = (PreviewViewPager) findViewById(R.id.viewpager);
         checkBox = (CheckBox) findViewById(R.id.checkbox);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
+        // space for status bar
+        RelativeLayout.LayoutParams toolbarLayoutParams = (RelativeLayout.LayoutParams) toolbar.getLayoutParams();
+        toolbarLayoutParams.topMargin = SystemUtil.statusBarHeight;
+        toolbar.setLayoutParams(toolbarLayoutParams);
         titleView = (TextView) findViewById(R.id.title);
-        if (SImagePicker.getPickerConfig().getToolbarColor() != 0) {
-            toolbar.setBackgroundColor(SImagePicker.getPickerConfig().getToolbarColor());
-        }
         previewBottomLayout = (PickerBottomLayout) findViewById(R.id.picker_bottom);
         navView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -473,33 +476,30 @@ public class PickerPreviewActivity extends BasePickerActivity implements PickerA
         if (currentState == STATE_SHOW_MENU) {
             hideTitleBar();
             previewBottomLayout.hide();
-            contentView.setSystemUiVisibility(View.INVISIBLE);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
             currentState = STATE_FULLSCREEN;
         } else {
             showTitleBar();
             previewBottomLayout.show();
-            contentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
             currentState = STATE_SHOW_MENU;
         }
     }
 
     private void hideMenu() {
-        // toolbar.setTranslationY(-toolbarHeight);
-        toolbar.setVisibility(View.GONE);
+        toolbar.setTranslationY(-toolbarHeight);
         previewBottomLayout.setTranslationY(bottomLayoutHeight);
-        contentView.setSystemUiVisibility(View.INVISIBLE);
+        contentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
         currentState = STATE_FULLSCREEN;
     }
 
 
     private void hideTitleBar() {
-        // toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-        toolbar.setVisibility(View.GONE);
+        toolbar.animate().translationY(-toolbar.getHeight()-SystemUtil.statusBarHeight).setInterpolator(new AccelerateInterpolator(2));
     }
 
     private void showTitleBar() {
-        // toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
-        toolbar.setVisibility(View.VISIBLE);
+        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
 
     private void toggleSelectPhoto(String filePath) {

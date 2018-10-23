@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:background="@color/black"
     android:orientation="vertical">
-
 
     <FrameLayout
         android:id="@+id/container"
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/black">
+        android:layout_height="wrap_content">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -28,45 +28,46 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"/>
         </FrameLayout>
-
-
     </FrameLayout>
-
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        android:layout_alignParentTop="true"
+        android:background="@color/transparent"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_height"
-        android:layout_gravity="top"
-        android:background="?attr/colorPrimary"
-        android:titleTextColor="@color/white">
+        android:layout_height="@dimen/toolbar_height">
 
-        <ImageView
-            android:id="@+id/nav_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:scaleType="center"
-            android:src="@drawable/ic_general_back"/>
+        <FrameLayout
+            android:id="@+id/toolbar_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/nav_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:scaleType="center"
+                android:src="@drawable/ic_general_back"/>
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="30dp"
-            android:gravity="center_vertical"
-            android:textColor="@color/white"
-            android:textSize="20dp"
-            tools:text="haha"/>
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="30dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                tools:text="haha"/>
 
-        <com.imnjh.imagepicker.widget.CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center_vertical|right"
-            android:layout_marginRight="20dp"
-            app:checkbox_color="@color/white"
-            app:checkbox_size="24dp"
-            app:checked_drawable="@drawable/ic_album_tick_blue"
-            app:unchecked_color="@color/transparent_70_white"/>
+            <com.imnjh.imagepicker.widget.CheckBox
+                android:id="@+id/checkbox"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="20dp"
+                app:checkbox_color="@color/white"
+                app:checkbox_size="24dp"
+                app:checked_drawable="@drawable/ic_album_tick_blue"
+                app:unchecked_color="@color/transparent_70_white"/>
+        </FrameLayout>
     </android.support.v7.widget.Toolbar>
-</FrameLayout>
+</RelativeLayout>
