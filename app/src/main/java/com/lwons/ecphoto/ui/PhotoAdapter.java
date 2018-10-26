@@ -46,7 +46,7 @@ public class PhotoAdapter extends RecyclerView.Adapter {
         return mPhotoList.size();
     }
 
-    public void setOnLongClickListener(OnItemLongClickListener listener) {
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
         mItemLongClickListener = listener;
     }
 

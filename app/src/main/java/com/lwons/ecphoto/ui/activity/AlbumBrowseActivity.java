@@ -31,7 +31,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by liuwons on 2018/10/19
  */
-public class AlbumBrowseActivity extends AppCompatActivity implements View.OnClickListener {
+public class AlbumBrowseActivity extends AppCompatActivity implements View.OnClickListener, PhotoAdapter.OnItemClickListener, PhotoAdapter.OnItemLongClickListener {
     public static final String ALBUM_NAME = "album_name";
 
     private static final int REQ_CODE_PICK_IMAGE = 5650;
@@ -45,6 +45,7 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
     private PhotoAdapter mPhotoAdapter;
 
     private String mAlbumName;
+    private List<Photo> mPhotos;
 
     private Disposable mPhotoDisposable;
 
@@ -53,10 +54,14 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_browse);
 
+        mPhotos = new ArrayList<>();
+
         mPhotoRecycler = findViewById(R.id.photo_list);
         GridLayoutManager layoutManager = new GridLayoutManager(this, COL_COUNT);
         mPhotoRecycler.setLayoutManager(layoutManager);
         mPhotoAdapter = new PhotoAdapter();
+        mPhotoAdapter.setOnItemClickListener(this);
+        mPhotoAdapter.setOnItemLongClickListener(this);
         mPhotoRecycler.setAdapter(mPhotoAdapter);
 
         Toolbar myToolbar = findViewById(R.id.toolbar);
@@ -90,6 +95,7 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onNext(List<Photo> photos) {
                         mPhotoAdapter.setPhotos(photos);
+                        mPhotos = photos;
                     }
 
                     @Override
@@ -177,5 +183,25 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
                     data.getStringArrayListExtra(PhotoPickerActivity.EXTRA_RESULT_SELECTION);
             onPickedPhotos(pathList);
         }
+    }
+
+    @Override
+    public void onItemClick(Photo photo) {
+        Intent intent = new Intent(this, PhotoBrowseActivity.class);
+        intent.putStringArrayListExtra(PhotoBrowseActivity.KEY_PHOTO_URIS, getPhotoUris());
+        startActivity(intent);
+    }
+
+    private ArrayList<String> getPhotoUris() {
+        ArrayList<String> uris = new ArrayList<>();
+        for (Photo photo : mPhotos) {
+            uris.add(photo.originUri);
+        }
+        return uris;
+    }
+
+    @Override
+    public void onItemLongClick(Photo photo) {
+
     }
 }
