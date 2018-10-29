@@ -8,8 +8,8 @@ import com.lwons.ecphoto.model.Photo;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 
 /**
  * Created by liuwons on 2018/10/19
@@ -67,5 +67,9 @@ public class DatabaseManager {
 
     public Observable<List<Photo>> asyncLoadPhotos(String album) {
         return getDAO().asyncLoadPhotos(album).toObservable();
+    }
+
+    public Single<Photo> asyncLoadFirstPhotoInAlbum(String album) {
+        return getDAO().asyncLoadFirstPhotoInAlbum(album);
     }
 }

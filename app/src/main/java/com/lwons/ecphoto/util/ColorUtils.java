@@ -14,6 +14,25 @@ public class ColorUtils {
 
     public static int[] mCardColors;
     public static int randomCardColor(@NonNull Context context) {
+        asureInited(context);
+
+        Random random = new Random();
+        return mCardColors[random.nextInt(mCardColors.length)];
+    }
+
+    public static int generateColor(@NonNull Context context, String text) {
+        asureInited(context);
+
+        byte[] bytes = text.getBytes();
+        int sum = 0;
+        for (byte b : bytes) {
+            sum += b;
+        }
+        sum = Math.abs(sum);
+        return mCardColors[sum % mCardColors.length];
+    }
+
+    private static void asureInited(Context context) {
         if (mCardColors == null) {
             synchronized (ColorUtils.class) {
                 if (mCardColors == null) {
@@ -21,8 +40,5 @@ public class ColorUtils {
                 }
             }
         }
-
-        Random random = new Random();
-        return mCardColors[random.nextInt(mCardColors.length)];
     }
 }

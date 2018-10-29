@@ -24,6 +24,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Single;
 
 /**
  * Created by liuwons on 2018/10/20
@@ -255,6 +256,10 @@ public class Neo {
 
     public synchronized Observable<List<Photo>> loadPhotos(String albumName) {
         return mDataManager.loadPhotos(albumName);
+    }
+
+    public synchronized Single<Photo> loadAlbumCover(String albumName) {
+        return mDataManager.loadFirstPhotoInAlbum(albumName);
     }
 
     private long generateEncryptedFileIndex() {

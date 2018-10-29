@@ -16,7 +16,5 @@ public class Album {
 
     public long mCreateTime;
 
-    public String mCoverPhoto;
-
     public String mExtras;
 }

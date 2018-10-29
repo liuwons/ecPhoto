@@ -9,6 +9,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Single;
 
 /**
  * Created by liuwons on 2018/10/19
@@ -93,6 +94,10 @@ public class DataManager {
 
     public Observable<List<Photo>> loadPhotos(String albumName) {
         return DatabaseManager.getInstance().asyncLoadPhotos(albumName);
+    }
+
+    public Single<Photo> loadFirstPhotoInAlbum(String albumName) {
+        return DatabaseManager.getInstance().asyncLoadFirstPhotoInAlbum(albumName);
     }
 
 }

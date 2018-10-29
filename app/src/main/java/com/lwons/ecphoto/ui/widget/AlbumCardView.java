@@ -2,7 +2,6 @@ package com.lwons.ecphoto.ui.widget;
 
 import android.content.Context;
 import android.support.design.card.MaterialCardView;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +11,15 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.lwons.ecphoto.R;
 import com.lwons.ecphoto.model.Album;
+import com.lwons.ecphoto.model.Photo;
+import com.lwons.ecphoto.neo.Neo;
 import com.lwons.ecphoto.ui.AlbumAdapter;
 import com.lwons.ecphoto.util.ColorUtils;
+
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by liuwons on 2018/10/20
@@ -27,6 +33,8 @@ public class AlbumCardView extends RelativeLayout implements View.OnClickListene
 
     private AlbumAdapter.OnItemLongClickListener mLongClickListener;
     private AlbumAdapter.OnItemClickListener mClickListener;
+
+    private Disposable mCoverPhotoDisposable;
 
     public AlbumCardView(Context context) {
         super(context);
@@ -54,14 +62,34 @@ public class AlbumCardView extends RelativeLayout implements View.OnClickListene
         setOnLongClickListener(this);
     }
 
-    public void renderAlbum(Album album) {
+    public void renderAlbum(final Album album) {
         mAlbum = album;
         mAlbumName.setText(album.name);
-        if (TextUtils.isEmpty(album.mCoverPhoto)) {
-            mCover.setVisibility(INVISIBLE);
+
+        if (mCoverPhotoDisposable != null && !mCoverPhotoDisposable.isDisposed()) {
+            mCoverPhotoDisposable.dispose();
         }
-        int bgcolor = ColorUtils.randomCardColor(getContext());
-        mCardView.setCardBackgroundColor(bgcolor);
+        Neo.getInstance().loadAlbumCover(album.name)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<Photo>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        mCoverPhotoDisposable = d;
+                    }
+
+                    @Override
+                    public void onSuccess(Photo photo) {
+                        mCover.setVisibility(VISIBLE);
+                        mCover.setImageURI(photo.originUri);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mCover.setVisibility(INVISIBLE);
+                        mCardView.setCardBackgroundColor(ColorUtils.generateColor(getContext(), album.name));
+                    }
+                });
     }
 
     @Override
