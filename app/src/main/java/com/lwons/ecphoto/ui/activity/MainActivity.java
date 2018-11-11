@@ -179,18 +179,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Neo.getInstance().addAlbum(name)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Observer<Boolean>() {
+                                .subscribe(new Observer<Album>() {
                                     @Override
                                     public void onSubscribe(Disposable d) {
                                     }
 
                                     @Override
-                                    public void onNext(Boolean aBoolean) {
-                                        if (aBoolean) {
-                                            showAlert("succeed");
-                                        } else {
-                                            showAlert("failed");
-                                        }
+                                    public void onNext(Album album) {
+                                        showAlert("succeed");
                                     }
 
                                     @Override
@@ -283,6 +279,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onItemClick(Album album) {
         Intent intent = new Intent(this, AlbumBrowseActivity.class);
         intent.putExtra(AlbumBrowseActivity.ALBUM_NAME, album.name);
+        intent.putExtra(AlbumBrowseActivity.ALBUM_ID, album.id);
         startActivity(intent);
     }
 }

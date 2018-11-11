@@ -21,8 +21,8 @@ public interface AppDAO {
     @Query("SELECT * FROM album")
     List<Album> loadAllAlbum();
 
-    @Query("SELECT * FROM photo WHERE  album = :album")
-    List<Photo> loadAllPhotos(String album);
+    @Query("SELECT * FROM photo WHERE  albumId = :albumId")
+    List<Photo> loadAllPhotos(String albumId);
 
     @Insert
     void insertPhoto(Photo... photos);
@@ -33,15 +33,15 @@ public interface AppDAO {
     @Insert
     void insertAlbum(Album... albums);
 
-    @Query("DELETE FROM album WHERE  name = :albumName")
-    void deleteAlbum(String albumName);
+    @Query("DELETE FROM album WHERE  id = :albumId")
+    void deleteAlbum(String albumId);
 
     @Query("SELECT * FROM album")
     Flowable<List<Album>> asyncLoadAlbums();
 
-    @Query("SELECT * FROM photo WHERE  album = :album")
-    Flowable<List<Photo>> asyncLoadPhotos(String album);
+    @Query("SELECT * FROM photo WHERE  albumId = :albumId")
+    Flowable<List<Photo>> asyncLoadPhotos(String albumId);
 
-    @Query("SELECT * FROM photo WHERE  album = :album order by createTime limit 1")
-    Single<Photo> asyncLoadFirstPhotoInAlbum(String album);
+    @Query("SELECT * FROM photo WHERE  albumId = :albumId order by createTime limit 1")
+    Single<Photo> asyncLoadFirstPhotoInAlbum(String albumId);
 }

@@ -57,19 +57,19 @@ public class DatabaseManager {
         getDAO().insertAlbum(albums);
     }
 
-    public void deleteAlbum(String album) {
-        getDAO().deleteAlbum(album);
+    public void deleteAlbum(String albumId) {
+        getDAO().deleteAlbum(albumId);
     }
 
     public Observable<List<Album>> asyncLoadAlbums() {
         return getDAO().asyncLoadAlbums().toObservable();
     }
 
-    public Observable<List<Photo>> asyncLoadPhotos(String album) {
-        return getDAO().asyncLoadPhotos(album).toObservable();
+    public Observable<List<Photo>> asyncLoadPhotos(String albumId) {
+        return getDAO().asyncLoadPhotos(albumId).toObservable();
     }
 
-    public Single<Photo> asyncLoadFirstPhotoInAlbum(String album) {
-        return getDAO().asyncLoadFirstPhotoInAlbum(album);
+    public Single<Photo> asyncLoadFirstPhotoInAlbum(String albumId) {
+        return getDAO().asyncLoadFirstPhotoInAlbum(albumId);
     }
 }

@@ -17,30 +17,30 @@ public class MemCache {
     // photo id to photo
     private Map<String, Photo> mIdIndexedPhotos;
     // album name to photos
-    private Map<String, List<Photo>> mAlbumNameIndexedPhotos;
+    private Map<String, List<Photo>> mAlbumIdIndexedPhotos;
 
     public MemCache() {
         mAlbumList = new LinkedList<>();
         mIdIndexedPhotos = new HashMap<>();
-        mAlbumNameIndexedPhotos = new HashMap<>();
+        mAlbumIdIndexedPhotos = new HashMap<>();
     }
 
     public synchronized void deletePhoto(String photoId) {
         Photo photo = mIdIndexedPhotos.get(photoId);
         mIdIndexedPhotos.remove(photoId);
         if (photo != null) {
-            String albumName = photo.album;
-            mAlbumNameIndexedPhotos.get(albumName).remove(photo);
+            String albumId = photo.albumId;
+            mAlbumIdIndexedPhotos.get(albumId).remove(photo);
         }
     }
 
-    public synchronized void deleteAlbum(String albumName) {
-        if (!albumExists(albumName)) {
+    public synchronized void deleteAlbum(String albumId) {
+        if (!albumExists(albumId)) {
             return;
         }
         Album album = null;
         for (Album a : mAlbumList) {
-            if (a.name.equals(albumName)) {
+            if (a.id.equals(albumId)) {
                 album = a;
             }
         }
@@ -48,30 +48,30 @@ public class MemCache {
             return;
         }
         mAlbumList.remove(album);
-        List<Photo> photos = mAlbumNameIndexedPhotos.get(albumName);
+        List<Photo> photos = mAlbumIdIndexedPhotos.get(albumId);
         if (photos == null) {
             return;
         }
         for (Photo p : photos) {
             mIdIndexedPhotos.remove(p.photoId);
         }
-        mAlbumNameIndexedPhotos.remove(albumName);
+        mAlbumIdIndexedPhotos.remove(albumId);
     }
 
     public synchronized void addPhoto(Photo photo) {
         mIdIndexedPhotos.put(photo.photoId, photo);
-        mAlbumNameIndexedPhotos.get(photo.album).remove(photo);
+        mAlbumIdIndexedPhotos.get(photo.albumId).remove(photo);
     }
 
     public synchronized void addAlbum(Album album) {
-        if (albumExists(album.name)) {
+        if (albumExists(album.id)) {
             return;
         }
         mAlbumList.add(album);
-        mAlbumNameIndexedPhotos.put(album.name, new LinkedList<Photo>());
+        mAlbumIdIndexedPhotos.put(album.id, new LinkedList<Photo>());
     }
 
     public synchronized boolean albumExists(String albumName) {
-        return mAlbumNameIndexedPhotos.containsKey(albumName);
+        return mAlbumIdIndexedPhotos.containsKey(albumName);
     }
 }

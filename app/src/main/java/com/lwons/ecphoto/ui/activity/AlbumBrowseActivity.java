@@ -33,6 +33,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class AlbumBrowseActivity extends AppCompatActivity implements View.OnClickListener, PhotoAdapter.OnItemClickListener, PhotoAdapter.OnItemLongClickListener {
     public static final String ALBUM_NAME = "album_name";
+    public static final String ALBUM_ID = "album_id";
 
     private static final int REQ_CODE_PICK_IMAGE = 5650;
 
@@ -45,6 +46,7 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
     private PhotoAdapter mPhotoAdapter;
 
     private String mAlbumName;
+    private String mAlbumId;
     private List<Photo> mPhotos;
 
     private Disposable mPhotoDisposable;
@@ -71,6 +73,7 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
         mFloatingActionButton.setOnClickListener(this);
 
         mAlbumName = getIntent().getStringExtra(ALBUM_NAME);
+        mAlbumId = getIntent().getStringExtra(ALBUM_ID);
         if (TextUtils.isEmpty(mAlbumName)) {
             showError("internal error");
             return;
@@ -83,7 +86,7 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
         if (mPhotoDisposable != null && !mPhotoDisposable.isDisposed()) {
             mPhotoDisposable.dispose();
         }
-        Neo.getInstance().loadPhotos(mAlbumName)
+        Neo.getInstance().loadPhotos(mAlbumId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Photo>>() {
@@ -133,7 +136,7 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
 
     private void onAddPhotos(List<String> photoUris) {
         for (String uri : photoUris) {
-            Neo.getInstance().encryptPhoto(this, mAlbumName, uri)
+            Neo.getInstance().encryptPhoto(this, mAlbumId, uri)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<Integer>() {

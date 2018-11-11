@@ -15,7 +15,7 @@ public class Photo {
     public String photoId;
 
     @NonNull
-    public String album;
+    public String albumId;
 
     public String originUri;
     public String encryptedFilePath;

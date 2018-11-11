@@ -69,7 +69,7 @@ public class AlbumCardView extends RelativeLayout implements View.OnClickListene
         if (mCoverPhotoDisposable != null && !mCoverPhotoDisposable.isDisposed()) {
             mCoverPhotoDisposable.dispose();
         }
-        Neo.getInstance().loadAlbumCover(album.name)
+        Neo.getInstance().loadAlbumCover(album.id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<Photo>() {

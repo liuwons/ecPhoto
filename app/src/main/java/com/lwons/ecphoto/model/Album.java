@@ -12,6 +12,8 @@ import android.support.annotation.NonNull;
 public class Album {
     @PrimaryKey
     @NonNull
+    public String id;
+
     public String name;
 
     public long mCreateTime;

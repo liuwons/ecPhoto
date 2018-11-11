@@ -21,30 +21,27 @@ public class DataManager {
         mDatabaseManager = DatabaseManager.getInstance();
     }
 
-    public Observable<Boolean> addAlbum(final String albumName) {
-        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+    public Observable<Album> addAlbum(final Album album) {
+        return Observable.create(new ObservableOnSubscribe<Album>() {
             @Override
-            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                Album album = new Album();
-                album.name = albumName;
-                album.mCreateTime = System.currentTimeMillis();
+            public void subscribe(ObservableEmitter<Album> e) throws Exception {
                 try {
                     DatabaseManager.getInstance().addAlbum(album);
                 } catch (Throwable throwable) {
                     e.onError(throwable);
                 }
-                e.onNext(true);
+                e.onNext(album);
                 e.onComplete();
             }
         });
     }
 
-    public Observable<Boolean> deleteAlbum(final String albumName) {
+    public Observable<Boolean> deleteAlbum(final String albumId) {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) {
                 try {
-                    DatabaseManager.getInstance().deleteAlbum(albumName);
+                    DatabaseManager.getInstance().deleteAlbum(albumId);
                 } catch (Throwable throwable) {
                     e.onError(throwable);
                 }
@@ -92,12 +89,12 @@ public class DataManager {
         return DatabaseManager.getInstance().asyncLoadAlbums();
     }
 
-    public Observable<List<Photo>> loadPhotos(String albumName) {
-        return DatabaseManager.getInstance().asyncLoadPhotos(albumName);
+    public Observable<List<Photo>> loadPhotos(String albumId) {
+        return DatabaseManager.getInstance().asyncLoadPhotos(albumId);
     }
 
-    public Single<Photo> loadFirstPhotoInAlbum(String albumName) {
-        return DatabaseManager.getInstance().asyncLoadFirstPhotoInAlbum(albumName);
+    public Single<Photo> loadFirstPhotoInAlbum(String albumId) {
+        return DatabaseManager.getInstance().asyncLoadFirstPhotoInAlbum(albumId);
     }
 
 }
