@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.lwons.ecphoto.R;
+import com.lwons.ecphoto.image.EncrypedDraweeView;
 import com.lwons.ecphoto.model.Album;
 import com.lwons.ecphoto.model.Photo;
 import com.lwons.ecphoto.neo.Neo;
@@ -27,7 +27,7 @@ import io.reactivex.schedulers.Schedulers;
 public class AlbumCardView extends RelativeLayout implements View.OnClickListener, View.OnLongClickListener {
     private MaterialCardView mCardView;
     private TextView mAlbumName;
-    private SimpleDraweeView mCover;
+    private EncrypedDraweeView mCover;
 
     private Album mAlbum = null;
 
@@ -81,7 +81,7 @@ public class AlbumCardView extends RelativeLayout implements View.OnClickListene
                     @Override
                     public void onSuccess(Photo photo) {
                         mCover.setVisibility(VISIBLE);
-                        mCover.setImageURI(photo.originUri);
+                        mCover.setEncryptedImageURI(photo.encryptedUri);
                     }
 
                     @Override

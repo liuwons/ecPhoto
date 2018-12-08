@@ -47,8 +47,24 @@ public class EncrypedDraweeView extends SimpleDraweeView {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    @Override
-    public void setImageURI(final Uri uri, @Nullable final Object callerContext) {
+    public void setEncryptedImageURI(final String uriString) {
+        Uri uri = null;
+        try {
+            uri = Uri.parse(uriString);
+        } catch (Exception e) {
+            e.printStackTrace();
+            L.e(TAG, "parse uri failed: " + uriString);
+            return;
+        }
+        if (uri == null) {
+            L.e(TAG, "parse uri failed: " + uriString);
+            return;
+        }
+
+        setEncryptedImageURI(uri);
+    }
+
+    public void setEncryptedImageURI(final Uri uri) {
         L.d(TAG, "setImageURI:" + uri.toString());
         if (uri == null) {
             L.e(TAG, "empty uri");
@@ -84,12 +100,12 @@ public class EncrypedDraweeView extends SimpleDraweeView {
                         public void onComplete() {
                             Uri cachedDecryptedFileUri = Uri.fromFile(new File(EcpFormatUtils.getCacheFilePath(uri)));
                             L.d(TAG, "decrypted cache file: " + cachedDecryptedFileUri);
-                            EncrypedDraweeView.super.setImageURI(cachedDecryptedFileUri);
+                            setImageURI(cachedDecryptedFileUri);
                         }
                     });
 
         } else {
-            super.setImageURI(uri, callerContext);
+            setImageURI(uri);
         }
     }
 }

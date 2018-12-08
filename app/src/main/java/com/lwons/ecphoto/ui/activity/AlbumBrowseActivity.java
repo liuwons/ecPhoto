@@ -192,13 +192,14 @@ public class AlbumBrowseActivity extends AppCompatActivity implements View.OnCli
     public void onItemClick(Photo photo) {
         Intent intent = new Intent(this, PhotoBrowseActivity.class);
         intent.putStringArrayListExtra(PhotoBrowseActivity.KEY_PHOTO_URIS, getPhotoUris());
+        intent.putExtra(PhotoBrowseActivity.KEY_INIT_URI, photo.encryptedUri);
         startActivity(intent);
     }
 
     private ArrayList<String> getPhotoUris() {
         ArrayList<String> uris = new ArrayList<>();
         for (Photo photo : mPhotos) {
-            uris.add(photo.originUri);
+            uris.add(photo.encryptedUri);
         }
         return uris;
     }

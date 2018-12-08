@@ -117,6 +117,7 @@ public class Encryptor {
         }
 
         try {
+            cipherOutputStream.flush();
             cipherOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();

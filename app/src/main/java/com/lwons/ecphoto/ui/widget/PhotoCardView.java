@@ -51,7 +51,7 @@ public class PhotoCardView extends RelativeLayout implements View.OnClickListene
 
     public void renderPhoto(Photo photo) {
         mPhoto = photo;
-        mImage.setImageURI(photo.encryptedUri);
+        mImage.setEncryptedImageURI(photo.encryptedUri);
     }
 
     @Override

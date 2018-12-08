@@ -2,6 +2,7 @@ package com.lwons.ecphoto.ui.widget;
 
 import android.content.Context;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -10,6 +11,12 @@ import com.imnjh.imagepicker.util.SystemUtil;
 import com.imnjh.imagepicker.widget.subsamplingview.ImageSource;
 import com.imnjh.imagepicker.widget.subsamplingview.OnImageEventListener;
 import com.imnjh.imagepicker.widget.subsamplingview.SubsamplingScaleImageView;
+import com.lwons.ecphoto.neo.Neo;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 /**
@@ -59,6 +66,33 @@ public class PhotoBrowsePageView extends FrameLayout {
 
     public void setOnClickListener(OnClickListener listener) {
         originImageView.setOnClickListener(listener);
+    }
+
+    public void setEncryptedImageUri(final Uri encryptedImageUri) {
+        Neo.getInstance().decrypt2cache(encryptedImageUri)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        originImageView.setImage(ImageSource.uri(Neo.getInstance().getDecryptedUri(encryptedImageUri)));
+                    }
+                });
     }
 
     public void setOriginImage(ImageSource imageSource) {

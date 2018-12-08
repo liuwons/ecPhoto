@@ -11,18 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.imnjh.imagepicker.widget.subsamplingview.ImageSource;
 import com.imnjh.imagepicker.widget.subsamplingview.OnImageEventListener;
 import com.lwons.ecphoto.R;
 import com.lwons.ecphoto.ui.PhotoBrowseViewPager;
 import com.lwons.ecphoto.ui.widget.PhotoBrowsePageView;
 
-import java.io.File;
 import java.util.List;
 
 public class PhotoBrowseActivity extends AppCompatActivity {
     public static final String KEY_PHOTO_URIS = "photo_uris";
     public static final String KEY_INIT_POS = "init_pos";
+    public static final String KEY_INIT_URI = "init_uri";
 
     private PhotoBrowseViewPager mViewPager;
     private Toolbar mToolbar;
@@ -35,6 +34,8 @@ public class PhotoBrowseActivity extends AppCompatActivity {
 
     private List<String> mPhotoUris;
     private int mInitPos;
+    private String mInitUri;
+
     private boolean mFirstImageLoaded;
     private boolean mEntering = true;
 
@@ -43,7 +44,18 @@ public class PhotoBrowseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mPhotoUris = getIntent().getStringArrayListExtra(KEY_PHOTO_URIS);
-        mInitPos = getIntent().getIntExtra(KEY_INIT_POS, 0);
+        mInitPos = getIntent().getIntExtra(KEY_INIT_POS, -1);
+        if (mInitPos < 0) {
+            mInitUri = getIntent().getStringExtra(KEY_INIT_URI);
+            for (int i = 0; i < mPhotoUris.size(); i ++) {
+                if (mPhotoUris.get(i).equals(mInitUri)) {
+                    mInitPos = i;
+                }
+            }
+        }
+        if (mInitPos < 0) {
+            mInitPos = 0;
+        }
 
         initUI();
     }
@@ -110,8 +122,7 @@ public class PhotoBrowseActivity extends AppCompatActivity {
                 }
             });
             Uri curUriInfo = Uri.parse(mPhotoUris.get(position));
-            File file = new File(curUriInfo.getPath());
-            pageView.setOriginImage(ImageSource.uri(file.getAbsolutePath()));
+            pageView.setEncryptedImageUri(curUriInfo);
             pageView.setBackgroundColor(Color.TRANSPARENT);
             container.addView(pageView,
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);

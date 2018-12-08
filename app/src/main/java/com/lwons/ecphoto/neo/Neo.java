@@ -363,13 +363,13 @@ public class Neo {
 
     /**
      *  Decrypt photo to cache dir
-     * @param encrypedPhotoUri Uri of encrypted photo, in the form of ecp://album_id/photo_id
+     * @param encryptedPhotoUri Uri of encrypted photo, in the form of ecp://album_id/photo_id
      * @return Observable of result
      */
-    public Observable<Integer> decrypt2cache(Uri encrypedPhotoUri) {
-        if (encrypedPhotoUri.getScheme().equals(EcpImageConstants.SCHEME_ECP)) {
-            String albumId = EcpFormatUtils.getAlbumId(encrypedPhotoUri);
-            String photoId = EcpFormatUtils.getPhotoId(encrypedPhotoUri);
+    public Observable<Integer> decrypt2cache(Uri encryptedPhotoUri) {
+        if (encryptedPhotoUri.getScheme().equals(EcpImageConstants.SCHEME_ECP)) {
+            String albumId = EcpFormatUtils.getAlbumId(encryptedPhotoUri);
+            String photoId = EcpFormatUtils.getPhotoId(encryptedPhotoUri);
             return decryptPhoto(albumId, photoId, getDecryptPathInCache(albumId, photoId));
         } else {
             return Observable.error(new Exception("Uri id not ecp scheme"));
@@ -380,5 +380,13 @@ public class Neo {
         String path = new File(mCachePath, albumId).getAbsolutePath();
         String fileName = photoId + EcpImageConstants.ECP_ENCRYPTED_FILE_SUFFIX + ".img";
         return new File(path, fileName).getAbsolutePath();
+    }
+
+    public Uri getDecryptedUri(Uri encryptedPhotoUri) {
+        return Uri.fromFile(
+                new File(
+                        getDecryptPathInCache(
+                                EcpFormatUtils.getAlbumId(encryptedPhotoUri),
+                                EcpFormatUtils.getPhotoId(encryptedPhotoUri))));
     }
 }
