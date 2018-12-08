@@ -11,7 +11,9 @@ import com.lwons.ecphoto.encry.EncryptorCallback;
 import com.lwons.ecphoto.image.EcpImageConstants;
 import com.lwons.ecphoto.model.Album;
 import com.lwons.ecphoto.model.Photo;
+import com.lwons.ecphoto.util.EcpFormatUtils;
 import com.lwons.ecphoto.util.FileUtils;
+import com.lwons.ecphoto.util.L;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,13 +28,12 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
-import io.reactivex.internal.operators.observable.ObservableError;
 
 /**
  * Created by liuwons on 2018/10/20
  */
 public class Neo {
-    private static final String ENCRYPTED_FILE_SUFFIX = ".ecp";
+    private static final String TAG = Neo.class.getSimpleName();
 
     private static Neo sInstance;
 
@@ -200,6 +201,10 @@ public class Neo {
 
         final String photoId = generateEncryptedPhotoId();
         final String outputPath = getEncryptedFilePath(albumId, photoId);
+        final File outputDir = new File(outputPath).getParentFile();
+        if (!outputDir.exists() && !outputDir.mkdirs()) {
+            return Observable.error(new FileNotFoundException("create folder failed"));
+        }
         File outputFile = new File(outputPath);
         final FileOutputStream outputStream;
         try {
@@ -231,6 +236,7 @@ public class Neo {
                         photo.albumId = albumId;
                         photo.createTime = System.currentTimeMillis();
                         photo.encryptedFilePath = outputPath;
+                        photo.encryptedUri = EcpImageConstants.SCHEME_ECP_PREFIX + albumId + EcpImageConstants.URI_SEPARATOR + photoId;
                         photo.photoId = photoId;
                         photo.size = finalSize;
                         mDataManager.addPhoto(photo);
@@ -241,6 +247,7 @@ public class Neo {
     }
 
     public synchronized Observable<Integer> decryptPhoto(final String albumId, final String photoId, final String outputPath) {
+        L.d(TAG, "decryptPhoto [out]" + outputPath);
         if (!mInited) {
             return Observable.error(new NeoException("not init yet"));
         }
@@ -266,6 +273,10 @@ public class Neo {
             return Observable.error(new NeoException("file not found"));
         }
 
+        File outputDir = new File(outputPath).getParentFile();
+        if (!outputDir.exists() && !outputDir.mkdirs()) {
+            return Observable.error(new NeoException("create folder failed: " + outputDir.getAbsolutePath()));
+        }
         final OutputStream outputStream;
         try {
             outputStream = new FileOutputStream(outputPath);
@@ -338,7 +349,7 @@ public class Neo {
     }
 
     private String getEncryptedFileName(String photoId) {
-        return photoId + ENCRYPTED_FILE_SUFFIX;
+        return photoId + EcpImageConstants.ECP_ENCRYPTED_FILE_SUFFIX;
     }
 
     private String getEncryptedFilePath(String albumId, String photoId) {
@@ -356,10 +367,9 @@ public class Neo {
      * @return Observable of result
      */
     public Observable<Integer> decrypt2cache(Uri encrypedPhotoUri) {
-        if (encrypedPhotoUri.getScheme().equals(EcpImageConstants.SCHEMA_ECP)) {
-            List<String> segs = encrypedPhotoUri.getPathSegments();
-            String albumId = segs.get(0);
-            String photoId = segs.get(1);
+        if (encrypedPhotoUri.getScheme().equals(EcpImageConstants.SCHEME_ECP)) {
+            String albumId = EcpFormatUtils.getAlbumId(encrypedPhotoUri);
+            String photoId = EcpFormatUtils.getPhotoId(encrypedPhotoUri);
             return decryptPhoto(albumId, photoId, getDecryptPathInCache(albumId, photoId));
         } else {
             return Observable.error(new Exception("Uri id not ecp scheme"));
@@ -368,7 +378,7 @@ public class Neo {
 
     public synchronized String getDecryptPathInCache(String albumId, String photoId) {
         String path = new File(mCachePath, albumId).getAbsolutePath();
-        String fileName = photoId + ENCRYPTED_FILE_SUFFIX + ".img";
+        String fileName = photoId + EcpImageConstants.ECP_ENCRYPTED_FILE_SUFFIX + ".img";
         return new File(path, fileName).getAbsolutePath();
     }
 }

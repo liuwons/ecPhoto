@@ -18,6 +18,7 @@ public class Photo {
     public String albumId;
 
     public String originUri;
+    public String encryptedUri;
     public String encryptedFilePath;
     public long size;
 

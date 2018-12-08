@@ -7,8 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.lwons.ecphoto.R;
+import com.lwons.ecphoto.image.EncrypedDraweeView;
 import com.lwons.ecphoto.model.Photo;
 import com.lwons.ecphoto.ui.PhotoAdapter;
 
@@ -17,7 +17,7 @@ import com.lwons.ecphoto.ui.PhotoAdapter;
  */
 public class PhotoCardView extends RelativeLayout implements View.OnClickListener, View.OnLongClickListener {
     private MaterialCardView mCardView;
-    private SimpleDraweeView mImage;
+    private EncrypedDraweeView mImage;
 
     private Photo mPhoto = null;
 
@@ -51,7 +51,7 @@ public class PhotoCardView extends RelativeLayout implements View.OnClickListene
 
     public void renderPhoto(Photo photo) {
         mPhoto = photo;
-        mImage.setImageURI(photo.originUri);
+        mImage.setImageURI(photo.encryptedUri);
     }
 
     @Override

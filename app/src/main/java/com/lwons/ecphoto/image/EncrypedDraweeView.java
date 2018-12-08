@@ -3,14 +3,16 @@ package com.lwons.ecphoto.image;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.lwons.ecphoto.neo.Neo;
+import com.lwons.ecphoto.util.EcpFormatUtils;
+import com.lwons.ecphoto.util.L;
 
 import java.io.File;
-import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -23,6 +25,7 @@ import io.reactivex.schedulers.Schedulers;
  * DraweeView that can load encrypted photo uri like ecp://album_id/photo_id
  */
 public class EncrypedDraweeView extends SimpleDraweeView {
+    private static final String TAG = EncrypedDraweeView.class.getSimpleName();
 
     public EncrypedDraweeView(Context context, GenericDraweeHierarchy hierarchy) {
         super(context, hierarchy);
@@ -45,12 +48,19 @@ public class EncrypedDraweeView extends SimpleDraweeView {
     }
 
     @Override
-    public void setImageURI(Uri uri, @Nullable final Object callerContext) {
-        if (uri.getScheme().equals(EcpImageConstants.SCHEMA_ECP)) {
-            List<String> segs = uri.getPathSegments();
-            String albumId = segs.get(0);
-            String photoId = segs.get(1);
-            final Uri realUri = Uri.fromFile(new File(Neo.getInstance().getDecryptPathInCache(albumId, photoId)));
+    public void setImageURI(final Uri uri, @Nullable final Object callerContext) {
+        L.d(TAG, "setImageURI:" + uri.toString());
+        if (uri == null) {
+            L.e(TAG, "empty uri");
+            return;
+        }
+        String scheme = uri.getScheme();
+        if (TextUtils.isEmpty(scheme)) {
+            L.e(TAG, "empty scheme");
+            return;
+        }
+        L.d(TAG, "scheme: " + scheme);
+        if (EcpImageConstants.SCHEME_ECP.equals(scheme)) {
             Neo.getInstance().decrypt2cache(uri)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -62,17 +72,19 @@ public class EncrypedDraweeView extends SimpleDraweeView {
 
                         @Override
                         public void onNext(Integer integer) {
-
                         }
 
                         @Override
                         public void onError(Throwable e) {
-
+                            L.e(TAG, "decrypt error");
+                            e.printStackTrace();
                         }
 
                         @Override
                         public void onComplete() {
-                            EncrypedDraweeView.super.setImageURI(realUri, callerContext);
+                            Uri cachedDecryptedFileUri = Uri.fromFile(new File(EcpFormatUtils.getCacheFilePath(uri)));
+                            L.d(TAG, "decrypted cache file: " + cachedDecryptedFileUri);
+                            EncrypedDraweeView.super.setImageURI(cachedDecryptedFileUri);
                         }
                     });
 
