@@ -1,61 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.v4.widget.DrawerLayout android:id="@+id/light_activity_main"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/my_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/album_list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-    </android.support.v7.widget.RecyclerView>
+    android:layout_height="match_parent"
+    tools:openDrawer="left"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/float_action_button"
-        android:layout_width="348dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:src="@mipmap/action_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <RelativeLayout
-        android:id="@+id/loading_holder"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            android:layout_width="wrap_content"
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/album_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+        </android.support.v7.widget.RecyclerView>
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/float_action_button"
+            android:layout_width="348dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="loading"
-            android:textColor="#333333"/>
-    </RelativeLayout>
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@mipmap/action_add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <RelativeLayout
-        android:id="@+id/error_holder"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/loading_holder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="loading"
+                android:textColor="#333333"/>
+        </RelativeLayout>
 
-</android.support.constraint.ConstraintLayout>
+        <RelativeLayout
+            android:id="@+id/error_holder"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </RelativeLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <ExpandableListView
+        android:id="@+id/main_menu"
+        android:scrollbars="none"
+        android:layout_width="305dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#ffffff"
+        android:divider="#333333"
+        android:groupIndicator="@null"
+        android:dividerHeight="0px"
+        android:orientation="vertical"
+        tools:listitem="@layout/menu_item" />
+
+</android.support.v4.widget.DrawerLayout>

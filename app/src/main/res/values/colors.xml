@@ -4,6 +4,9 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#2e7d32</color>
 
+    <color name="default_bg_color">#ffffffff</color>
+    <color name="default_text_color">#ff333333</color>
+    <color name="default_separator_color">#ffeeeeee</color>
 
     <color name="light_purple">#ce93d8</color>
     <color name="deep_purple">#8e24aa</color>
@@ -34,4 +37,5 @@
         <item>@color/light_green</item>
         <item>@color/deep_green</item>
     </array>
+
 </resources>

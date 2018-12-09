@@ -1,0 +1,29 @@
+﻿{
+  "version": "1",
+  "groups": [
+    {
+      "id": 1,
+      "name": "Encryption",
+      "items": [
+        {
+          "id": 10001,
+          "name": "User Name/Password"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Storage",
+      "items": [
+        {
+          "id": 20001,
+          "name": "Cache Size"
+        },
+        {
+          "id": 20002,
+          "name": "Encrypted Data Location"
+        }
+      ]
+    }
+  ]
+}

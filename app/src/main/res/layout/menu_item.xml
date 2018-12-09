@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<TextView android:id="@+id/item_tv"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:singleLine="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</android.support.constraint.ConstraintLayout>
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:paddingBottom="15dp"
+    android:paddingLeft="47dp"
+    android:paddingRight="15dp"
+    android:paddingTop="15dp"
+    android:textSize="15sp"
+    android:textColor="@color/default_text_color" />

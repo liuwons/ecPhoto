@@ -94,6 +94,7 @@ public class Neo {
                     editor.putString(PREF_KEY_BASE_FPATH, mBasePath.getAbsolutePath());
                     editor.apply();
                 }
+                L.d(TAG, "base path:" + mBasePath.getAbsolutePath());
 
                 if (!mBasePath.exists() || !mBasePath.isDirectory()) {
                     e.onError(new NeoException("root path not available"));

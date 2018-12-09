@@ -17,12 +17,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.RelativeLayout;
 
 import com.lwons.ecphoto.R;
 import com.lwons.ecphoto.model.Album;
 import com.lwons.ecphoto.neo.Neo;
 import com.lwons.ecphoto.ui.AlbumAdapter;
+import com.lwons.ecphoto.ui.menu.MenuAdapter;
 
 import java.util.List;
 
@@ -46,6 +48,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView mAlbumRecycler;
     private AlbumAdapter mAlbumAdapter;
     private GridLayoutManager mAlbumLayoutManager;
+
+    private ExpandableListView mMenuView;
+    private MenuAdapter mMenuAdapter;
 
     private Disposable mAlbumDisposable;
 
@@ -79,6 +84,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAlbumLayoutManager = new GridLayoutManager(this, ALBUM_COLUMN);
         mAlbumRecycler.setLayoutManager(mAlbumLayoutManager);
         mAlbumRecycler.setAdapter(mAlbumAdapter);
+
+        mMenuView = findViewById(R.id.main_menu);
+        View menuHeader = LayoutInflater.from(this).inflate(R.layout.menu_header, null);
+        mMenuView.addHeaderView(menuHeader);
+        mMenuAdapter = new MenuAdapter();
+        mMenuAdapter.loadMenu(MenuAdapter.getDefaultMenu(this));
+        mMenuView.setAdapter(mMenuAdapter);
     }
 
     private void onPermissionGet() {

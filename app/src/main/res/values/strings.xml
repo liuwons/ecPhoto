@@ -14,4 +14,6 @@
     <string name="error_no_permission">App permission is not granted</string>
 
     <string name="image_picker_select">Done</string>
+
+    <string name="main_menu_title">Settings</string>
 </resources>
