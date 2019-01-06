@@ -10,7 +10,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,7 +32,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, AlbumAdapter.OnItemLongClickListener, AlbumAdapter.OnItemClickListener {
+public class MainActivity extends BaseAppCompatActivity implements View.OnClickListener, AlbumAdapter.OnItemLongClickListener, AlbumAdapter.OnItemClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int ALBUM_COLUMN = 2;
@@ -72,9 +71,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mAlbumRecycler = findViewById(R.id.album_list);
 
-        Toolbar myToolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-
         mFloatingActionButton = findViewById(R.id.float_action_button);
         mFloatingActionButton.setOnClickListener(this);
 
@@ -91,6 +87,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mMenuAdapter = new MenuAdapter();
         mMenuAdapter.loadMenu(MenuAdapter.getDefaultMenu(this));
         mMenuView.setAdapter(mMenuAdapter);
+        mMenuView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                return false;
+            }
+        });
+        mMenuView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                return false;
+            }
+        });
     }
 
     private void onPermissionGet() {

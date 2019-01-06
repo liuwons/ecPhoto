@@ -23,26 +23,22 @@
             android:layout_height="match_parent" />
     </FrameLayout>
 
-    <android.support.v7.widget.Toolbar
+    <LinearLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
         android:layout_alignParentTop="true"
         android:background="@color/transparent">
 
-        <FrameLayout
-            android:id="@+id/toolbar_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/nav_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="22dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_general_back" />
 
-            <ImageView
-                android:id="@+id/nav_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:scaleType="center"
-                android:src="@drawable/ic_general_back" />
-        </FrameLayout>
-    </android.support.v7.widget.Toolbar>
+    </LinearLayout>
 </RelativeLayout>
 
 

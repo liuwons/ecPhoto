@@ -2,6 +2,7 @@ package com.lwons;
 
 import android.app.Application;
 
+import com.blankj.utilcode.util.Utils;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.imnjh.imagepicker.PickerConfig;
 import com.imnjh.imagepicker.SImagePicker;
@@ -16,6 +17,8 @@ public class EcApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        Utils.init(this);
 
         Fresco.initialize(this);
         DatabaseManager.getInstance().init(getApplicationContext());

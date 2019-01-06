@@ -5,12 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
+import com.blankj.utilcode.util.BarUtils;
 import com.imnjh.imagepicker.widget.subsamplingview.OnImageEventListener;
 import com.lwons.ecphoto.R;
 import com.lwons.ecphoto.ui.PhotoBrowseViewPager;
@@ -18,15 +18,15 @@ import com.lwons.ecphoto.ui.widget.PhotoBrowsePageView;
 
 import java.util.List;
 
-public class PhotoBrowseActivity extends AppCompatActivity {
+public class PhotoBrowseActivity extends BaseAppCompatActivity {
     public static final String KEY_PHOTO_URIS = "photo_uris";
     public static final String KEY_INIT_POS = "init_pos";
     public static final String KEY_INIT_URI = "init_uri";
 
     private PhotoBrowseViewPager mViewPager;
-    private Toolbar mToolbar;
-    private ImageView mBackIcon;
     private PhotoViewAdapter mPhotoViewAdapter;
+
+    private ViewGroup mToolBar;
 
     private ImageView mPlaceHolderImage;
 
@@ -62,30 +62,17 @@ public class PhotoBrowseActivity extends AppCompatActivity {
 
     private void initUI() {
         setContentView(R.layout.activity_photo_browse);
+        setActionBarVisibility(View.GONE);
 
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        | View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        mToolBar = findViewById(R.id.toolbar);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mToolBar.getLayoutParams();
+        params.setMargins(params.leftMargin, BarUtils.getStatusBarHeight(), params.rightMargin, params.bottomMargin);
+        mToolBar.setLayoutParams(params);
 
-        mPhotoTapListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleState();
-            }
-        };
+        mPhotoTapListener = v -> toggleState();
 
-        mToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
         mPlaceHolderImage = findViewById(R.id.img_place_holder);
         mViewPager = findViewById(R.id.viewpager);
-        mBackIcon = findViewById(R.id.nav_icon);
-        mBackIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
 
         mPhotoViewAdapter = new PhotoViewAdapter();
         mViewPager.setAdapter(mPhotoViewAdapter);
@@ -93,9 +80,23 @@ public class PhotoBrowseActivity extends AppCompatActivity {
         mViewPager.setCurrentItem(mInitPos);
     }
 
+    private void showToolBar() {
+        mToolBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideToolBar() {
+        mToolBar.setVisibility(View.GONE);
+    }
+
 
     private void toggleState() {
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        if (isFullScreen()) {
+            cancelFullScreen();
+            showToolBar();
+        } else {
+            requestFullScreen();
+            hideToolBar();
+        }
     }
 
     class PhotoViewAdapter extends PagerAdapter {
@@ -146,4 +147,5 @@ public class PhotoBrowseActivity extends AppCompatActivity {
         }
 
     }
+
 }

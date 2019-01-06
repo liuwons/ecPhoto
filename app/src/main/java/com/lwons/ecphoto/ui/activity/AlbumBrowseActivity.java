@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -31,7 +30,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by liuwons on 2018/10/19
  */
-public class AlbumBrowseActivity extends AppCompatActivity implements View.OnClickListener, PhotoAdapter.OnItemClickListener, PhotoAdapter.OnItemLongClickListener {
+public class AlbumBrowseActivity extends BaseAppCompatActivity implements View.OnClickListener, PhotoAdapter.OnItemClickListener, PhotoAdapter.OnItemLongClickListener {
     public static final String ALBUM_NAME = "album_name";
     public static final String ALBUM_ID = "album_id";
 
