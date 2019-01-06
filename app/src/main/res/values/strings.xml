@@ -16,4 +16,6 @@
     <string name="image_picker_select">Done</string>
 
     <string name="main_menu_title">Settings</string>
+
+    <string name="album_browse_title">Albums</string>
 </resources>

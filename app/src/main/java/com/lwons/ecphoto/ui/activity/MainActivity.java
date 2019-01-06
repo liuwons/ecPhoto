@@ -56,7 +56,6 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         initViews();
 
@@ -66,6 +65,8 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
     }
 
     private void initViews() {
+        setTitle(getResources().getString(R.string.album_browse_title));
+        setContentView(R.layout.activity_main);
         mLoadingHolder = findViewById(R.id.loading_holder);
         mErrorHolder = findViewById(R.id.error_holder);
 

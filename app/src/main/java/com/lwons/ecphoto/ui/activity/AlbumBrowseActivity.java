@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +54,15 @@ public class AlbumBrowseActivity extends BaseAppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_browse);
 
+        mAlbumName = getIntent().getStringExtra(ALBUM_NAME);
+        mAlbumId = getIntent().getStringExtra(ALBUM_ID);
+        if (TextUtils.isEmpty(mAlbumName)) {
+            showError("internal error");
+            return;
+        }
+
+        setTitle(mAlbumName);
+
         mPhotos = new ArrayList<>();
 
         mPhotoRecycler = findViewById(R.id.photo_list);
@@ -65,18 +73,8 @@ public class AlbumBrowseActivity extends BaseAppCompatActivity implements View.O
         mPhotoAdapter.setOnItemLongClickListener(this);
         mPhotoRecycler.setAdapter(mPhotoAdapter);
 
-        Toolbar myToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
-
         mFloatingActionButton = findViewById(R.id.float_action_button);
         mFloatingActionButton.setOnClickListener(this);
-
-        mAlbumName = getIntent().getStringExtra(ALBUM_NAME);
-        mAlbumId = getIntent().getStringExtra(ALBUM_ID);
-        if (TextUtils.isEmpty(mAlbumName)) {
-            showError("internal error");
-            return;
-        }
 
         observeAlbum();
     }
